@@ -1,5 +1,5 @@
 using Application.Dto;
-using Service;
+using Domain.Service;
 
 namespace Application.UseCase;
 

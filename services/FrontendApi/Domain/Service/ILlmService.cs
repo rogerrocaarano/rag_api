@@ -1,13 +1,8 @@
+using Domain.Model;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+namespace Domain.Service;
 
-namespace Service{
-    public interface ILlmService {
-
-        void answerQuestion();
-
-    }
+public interface ILlmService
+{
+    Task<Message> AnswerQuestion(Conversation conversation);
 }

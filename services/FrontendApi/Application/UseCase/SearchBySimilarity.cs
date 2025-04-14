@@ -1,6 +1,6 @@
 using Application.Dto;
 using Domain.Repository;
-using Service;
+using Domain.Service;
 
 namespace Application.UseCase;
 
@@ -17,7 +17,7 @@ public class SearchBySimilarity {
         get; set;
     }
 
-    private ITextProcesorService textProcesor {
+    private ITextProcessorService TextProcessor {
         get; set;
     }
 
