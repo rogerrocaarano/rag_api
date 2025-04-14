@@ -1,29 +1,24 @@
+using Domain.Model;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+namespace Domain.Repository;
 
-namespace Repository{
-    public interface IVectorsRepository {
+public interface IVectorsRepository
+{
+    Task<Guid> AddCollection(string name, List<MetaDataTag> metaData);
 
-        void addCollection();
+    Task DeleteCollection(Guid collectionId);
 
-        void deleteCollection();
+    Task UpdateCollection(Collection collection);
 
-        void updateCollection();
+    Task<Collection> GetCollection(Guid collectionId);
 
-        void getCollection();
+    Task<Guid> AddDocument(EmbeddedText content, List<MetaDataTag> metaData);
 
-        void addDocument();
+    Task UpdateDocumentTags(Guid documentId, List<MetaDataTag> tags);
 
-        void updateDocument();
+    Task DeleteDocument(Guid documentId);
 
-        void deleteDocument();
+    Task<Guid> GetDocumentIdsByMetaDataTags(List<MetaDataTag> tags);
 
-        void getDocument();
-
-        void getSimilarDocuments();
-
-    }
+    Task<List<Guid>> GetSimilarDocumentIds(EmbeddedText content);
 }

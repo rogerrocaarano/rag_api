@@ -4,23 +4,23 @@ namespace Domain.Repository;
 
 public interface IChatsRepository
 {
-    BaseEntity AddMessage(Guid conversationId, String messageText, String messageRole);
+    Task<Guid> AddMessage(Guid conversationId, string messageText, string messageRole);
 
-    void GetMessage(Guid messageId, BaseEntity message);
+    Task<Message> GetMessage(Guid messageId);
 
-    void DeleteMessage(Guid messageId);
+    Task DeleteMessage(Guid messageId);
 
-    void DeleteConversation(Guid conversationId);
+    Task DeleteConversation(Guid conversationId);
 
-    BaseEntity AddConversation(String name);
+    Task<Conversation> AddConversation(string name);
 
-    void UpdateConversation(Guid conversationId, String name);
+    Task UpdateConversation(Guid conversationId, Conversation conversation);
 
-    BaseEntity GetConversation(Guid conversationId);
+    Task<Conversation> GetConversation(Guid conversationId);
 
-    void GetMessagesByConversationId(Guid conversationId, List<BaseEntity> messages);
+    Task<List<Message>> GetMessagesByConversationId(Guid conversationId);
 
-    void UpdateMessage();
+    Task UpdateMessage(Message message);
 
-    void GetMessagesByUserId();
+    Task<Message> GetMessagesByUserId(Guid userId);
 }

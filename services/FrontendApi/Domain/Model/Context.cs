@@ -1,6 +1,6 @@
 namespace Domain.Model;
 
-public class Context : Conversation
+public class Context : BaseEntity
 {
     public string Name { get; set; }
 

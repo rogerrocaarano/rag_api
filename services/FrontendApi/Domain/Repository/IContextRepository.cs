@@ -1,20 +1,26 @@
+using Domain.Model;
+
 namespace Domain.Repository;
 
 public interface IContextRepository
 {
-    void addContext();
+    Task<Guid> AddContext(string name, string description, List<string> tags);
 
-    void addFragment();
+    Task<Guid> AddFragment(string name, List<string> tags, int sequenceId);
 
-    void getContext();
+    Task<Context> GetContext(Guid contextId);
 
-    void getFragment();
+    Task<Fragment> GetFragment(Guid fragmentId);
+    
+    Task<List<Fragment>> GetFragmentsByContextId(Guid contextId);
+    
+    Task<Fragment> GetFragmentBySequenceId(Guid contextId, int sequenceId);
 
-    void updateContext();
+    Task UpdateContext(Context context);
 
-    void deleteContext();
+    Task DeleteContext(Guid contextId);
 
-    void deleteFragment();
+    Task DeleteFragment(Guid fragmentId);
 
-    void updateFragment();
+    Task UpdateFragment(Fragment fragment);
 }
