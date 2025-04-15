@@ -4,5 +4,5 @@ namespace Domain.Service;
 
 public interface ILlmService
 {
-    Task<Message> AnswerQuestion(Conversation conversation);
+    Task<Message> AnswerQuestion(List<Message> conversation, List<Fragment> context, Message rules);
 }
