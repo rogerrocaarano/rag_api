@@ -7,4 +7,6 @@ public class Context : BaseEntity
     public string Description { get; set; }
 
     public List<string> Tags { get; set; }
+
+    public ICollection<Fragment> Fragments { get; set; }
 }

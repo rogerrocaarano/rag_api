@@ -6,21 +6,21 @@ public interface IContextRepository
 {
     Task<Guid> AddContext(string name, string description, List<string> tags);
 
-    Task<Guid> AddFragment(string name, List<string> tags, int sequenceId);
+    Task<Guid> AddFragment(string content, List<string> tags, int sequenceId, Guid contextId);
 
     Task<Context> GetContext(Guid contextId);
 
     Task<Fragment> GetFragment(Guid fragmentId);
-    
-    Task<List<Fragment>> GetFragmentsByContextId(Guid contextId);
-    
-    Task<Fragment> GetFragmentBySequenceId(Guid contextId, int sequenceId);
 
-    Task UpdateContext(Context context);
+    Task UpdateContextTags(Guid contextId, List<string> tags);
 
     Task DeleteContext(Guid contextId);
 
     Task DeleteFragment(Guid fragmentId);
 
-    Task UpdateFragment(Fragment fragment);
+    Task UpdateFragmentTags(Guid fragmentId, List<string> tags);
+
+    Task<List<Fragment>> GetSimilarFragmentsByEmbedding(List<float> embedding);
+
+    Task<List<Context>> GetSimilarContextsByEmbedding(List<float> embedding);
 }

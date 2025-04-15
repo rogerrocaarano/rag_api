@@ -7,4 +7,6 @@ public class Fragment : BaseEntity
     public List<string> Tags { get; set; }
 
     public int SequenceId { get; set; }
+
+    public Guid ContextId { get; set; }
 }
