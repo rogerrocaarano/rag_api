@@ -5,5 +5,7 @@ namespace Domain.Model
         public string Role { get; set; }
 
         public string Content { get; set; }
+        
+        public Guid ConversationId { get; set; }
     }
 }

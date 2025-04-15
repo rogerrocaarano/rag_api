@@ -4,7 +4,7 @@ namespace Domain.Repository;
 
 public interface IChatsRepository
 {
-    Task<Guid> AddMessage(Guid conversationId, string messageText, string messageRole);
+    Task<Message> AddMessage(Guid conversationId, string messageContent, string messageRole);
 
     Task<Message> GetMessage(Guid messageId);
 
@@ -12,15 +12,11 @@ public interface IChatsRepository
 
     Task DeleteConversation(Guid conversationId);
 
-    Task<Conversation> AddConversation(string name);
+    Task<Conversation> AddConversation(String name, Guid ownerId);
 
-    Task UpdateConversation(Guid conversationId, Conversation conversation);
+    Task UpdateConversationName(Guid conversationId, string name);
 
     Task<Conversation> GetConversation(Guid conversationId);
 
-    Task<List<Message>> GetMessagesByConversationId(Guid conversationId);
-
-    Task UpdateMessage(Message message);
-
-    Task<Message> GetMessagesByUserId(Guid userId);
+    Task<List<Conversation>> GetConversationsByUserId(Guid userId);
 }
