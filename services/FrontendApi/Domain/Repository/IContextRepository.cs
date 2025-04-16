@@ -4,9 +4,9 @@ namespace Domain.Repository;
 
 public interface IContextRepository
 {
-    Task<Guid> AddContext(string name, string description, List<string> tags);
+    Task<Guid> AddContext(string name, string description, List<string> tags, List<float> embedding);
 
-    Task<Guid> AddFragment(string content, List<string> tags, int sequenceId, Guid contextId);
+    Task<Guid> AddFragment(string content, List<string> tags, int sequenceId, Guid contextId, List<float> embedding);
 
     Task<Context> GetContext(Guid contextId);
 
