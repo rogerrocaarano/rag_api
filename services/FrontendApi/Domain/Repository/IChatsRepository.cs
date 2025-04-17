@@ -12,7 +12,7 @@ public interface IChatsRepository
 
     Task DeleteConversation(Guid conversationId);
 
-    Task<Conversation> AddConversation(String name, Guid ownerId);
+    Task<Conversation> AddConversation(string name, Guid? ownerId);
 
     Task UpdateConversationName(Guid conversationId, string name);
 

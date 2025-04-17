@@ -1,10 +1,23 @@
-using Domain.Model;
-
 namespace Domain.Service;
 
-public interface ITextProcessorService
-{
-    Task<EmbeddedText> GenerateEmbedding(string text);
+public interface ITextProcessorService {
 
+    /// <summary>
+    /// @param text 
+    /// @return
+    /// </summary>
+    Task<List<float>> GenerateEmbeddingFromText(string text);
+
+    /// <summary>
+    /// @param text 
+    /// @return
+    /// </summary>
     Task<List<string>> SplitText(string text);
+
+    /// <summary>
+    /// @param text 
+    /// @return
+    /// </summary>
+    Task<List<string>> ExtractTagsFromText(string text);
+
 }

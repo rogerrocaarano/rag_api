@@ -1,27 +1,26 @@
-using Application.Dto;
+using Application.UseCase;
+using Domain.Constant;
 using Domain.Model;
+using Domain.Repository;
 
 namespace Application.Service;
 
-public class ConversationService
+public class ConversationService(
+    IChatsRepository chats,
+    AskLlmUseCase askLlm,
+    GetContextUseCase getContext)
 {
-    public async Task AskChatBot(string message)
+    public async Task<Message> AgentQuery(string message, Guid? userId = null)
     {
-        // TODO implement here
+        var conversationId = chats.AddConversation("", userId).Result.Id;
+        return await AgentQuery(message, conversationId, userId);
     }
 
-    public async Task AskChatBot(Guid conversationId, string message)
+    public async Task<Message> AgentQuery(string message, Guid conversationId, Guid? userId = null)
     {
-        // TODO implement here
-    }
-
-    public async Task UpdateConversationName(Guid conversationId, string name)
-    {
-        // TODO implement here
-    }
-
-    public async Task UpdateConversationName(Guid conversationId)
-    {
-        // TODO implement here
+        await chats.AddMessage(conversationId, message, MessageType.User);
+        var conversationHistory = (List<Message>)chats.GetConversation(conversationId).Result.Messages;
+        var context = await getContext.Execute(message);
+        return await askLlm.Execute(conversationHistory, context);
     }
 }

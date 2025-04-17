@@ -101,7 +101,7 @@ namespace Infrastructure.Persistence.ChatsRepository
             }
         }
 
-        public async Task<Conversation> AddConversation(string name, Guid ownerId)
+        public async Task<Conversation> AddConversation(string name, Guid? ownerId)
         {
             var conversation = new Conversation
             {
