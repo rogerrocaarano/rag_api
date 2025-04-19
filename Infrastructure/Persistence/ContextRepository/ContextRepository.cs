@@ -11,14 +11,18 @@ public class ContextRepository : IContextRepository
 
     private readonly ChromaCollectionClient _fragments;
 
-    public ContextRepository(string chromaUri, string contextCollectionStr, string fragmentCollectionStr)
+    public ContextRepository(
+        string chromaUri,
+        string contextCollectionName,
+        string fragmentCollectionName
+    )
     {
         var configOptions = new ChromaConfigurationOptions(uri: chromaUri);
         using var httpClient = new HttpClient();
         var vectorDb = new ChromaClient(configOptions, httpClient);
 
-        var contextCollection = vectorDb.GetOrCreateCollection(contextCollectionStr).Result;
-        var fragmentCollection = vectorDb.GetOrCreateCollection(fragmentCollectionStr).Result;
+        var contextCollection = vectorDb.GetOrCreateCollection(contextCollectionName).Result;
+        var fragmentCollection = vectorDb.GetOrCreateCollection(fragmentCollectionName).Result;
 
         _context = new ChromaCollectionClient(contextCollection, configOptions, httpClient);
         _fragments = new ChromaCollectionClient(fragmentCollection, configOptions, httpClient);
@@ -200,13 +204,14 @@ public class ContextRepository : IContextRepository
                 .OrderBy(x => x.Distance)
                 .Select(x => Guid.Parse(x.Id))
                 .ToList();
-            
+
             var fragments = new List<Fragment>();
             foreach (var fragmentId in fragmentIds)
             {
                 var fragment = await GetFragment(fragmentId);
                 fragments.Add(fragment);
             }
+
             return fragments;
         }
         catch (Exception e)
@@ -226,13 +231,14 @@ public class ContextRepository : IContextRepository
                 .OrderBy(x => x.Distance)
                 .Select(x => Guid.Parse(x.Id))
                 .ToList();
-            
+
             var contexts = new List<Context>();
             foreach (var contextId in contextIds)
             {
                 var context = await GetContext(contextId);
                 contexts.Add(context);
             }
+
             return contexts;
         }
         catch (Exception e)
