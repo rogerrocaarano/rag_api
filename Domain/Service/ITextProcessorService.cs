@@ -1,23 +1,12 @@
 namespace Domain.Service;
 
-public interface ITextProcessorService {
-
-    /// <summary>
-    /// @param text 
-    /// @return
-    /// </summary>
+public interface ITextProcessorService
+{
     Task<List<float>> GenerateEmbeddingFromText(string text);
 
-    /// <summary>
-    /// @param text 
-    /// @return
-    /// </summary>
-    Task<List<string>> SplitText(string text);
+    Task<List<string>> SplitTextFile(string filePath);
 
-    /// <summary>
-    /// @param text 
-    /// @return
-    /// </summary>
     Task<List<string>> ExtractTagsFromText(string text);
 
+    Task<List<string>> ExtractTagsFromText(string text, int maxTags);
 }

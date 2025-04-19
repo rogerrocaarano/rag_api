@@ -103,6 +103,22 @@ public class ContextRepository : IContextRepository
         }
     }
 
+    public async Task<Guid?> GetContextIdByFilePath(string name)
+    {
+        try
+        {
+            var result = await _context.Get(name);
+            return result == null
+                ? null
+                : Guid.Parse(result.Id);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
     public async Task<Fragment> GetFragment(Guid fragmentId)
     {
         try

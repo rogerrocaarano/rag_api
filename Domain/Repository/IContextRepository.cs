@@ -9,6 +9,8 @@ public interface IContextRepository
     Task<Guid> AddFragment(string content, List<string> tags, int sequenceId, Guid contextId, List<float> embedding);
 
     Task<Context> GetContext(Guid contextId);
+    
+    Task<Guid?> GetContextIdByFilePath(string name);
 
     Task<Fragment> GetFragment(Guid fragmentId);
 
