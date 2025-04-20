@@ -39,6 +39,7 @@ public static class RepositoriesInjector
         services.AddScoped<IChatsRepository, ChatsRepository>(provider =>
         {
             var dbContext = provider.GetRequiredService<ChatsDb>();
+            dbContext.Database.Migrate();
             return new ChatsRepository(dbContext);
         });
     }
