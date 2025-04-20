@@ -16,13 +16,13 @@ public static class ProvidersInjector
 
     private static void AddDeepseekApiClient(IServiceCollection services, IConfiguration configuration)
     {
-        var apiKey = configuration["Provider:Deepseek:ApiKey"] ?? throw new InvalidOperationException();
+        var apiKey = configuration["Services:Deepseek:ApiKey"] ?? throw new InvalidOperationException();
         services.AddSingleton<ILlmService>(_ => new DeepseekClient(apiKey));
     }
 
     private static void AddTextProcessor(IServiceCollection services, IConfiguration configuration)
     {
-        var baseUrl = configuration["Provider:TextProcessor:BaseUrl"] ?? throw new InvalidOperationException();
+        var baseUrl = configuration["Services:TextProcessor:BaseUrl"] ?? throw new InvalidOperationException();
         services.AddSingleton<ITextProcessorService>(_ => new TextProcessorService(baseUrl));
     }
 }

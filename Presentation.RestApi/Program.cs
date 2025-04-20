@@ -2,7 +2,7 @@ using Infrastructure.DI;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.WebHost.UseUrls("http://0.0.0.0:5000");
+builder.WebHost.UseUrls("http://0.0.0.0:5001");
 
 var configuration = builder.Configuration;
 var services = builder.Services;
@@ -21,7 +21,7 @@ services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "VIALMENTOR API Bridge", Version = "v1" });
 });
-
+services.AddControllers();
 services.InjectDependencies(configuration);
 
 var app = builder.Build();

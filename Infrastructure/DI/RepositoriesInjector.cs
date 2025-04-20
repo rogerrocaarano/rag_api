@@ -1,5 +1,7 @@
 using Domain.Repository;
+using Infrastructure.Persistence.ChatsRepository;
 using Infrastructure.Persistence.ContextRepository;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,6 +12,7 @@ public static class RepositoriesInjector
     public static void InjectRepositories(this IServiceCollection services, IConfiguration configuration)
     {
         AddChromaDbContextRepository(services, configuration);
+        AddChatsRepository(services, configuration);
     }
     
     private static void AddChromaDbContextRepository(IServiceCollection services, IConfiguration configuration)
@@ -23,6 +26,17 @@ public static class RepositoriesInjector
                                          throw new InvalidOperationException();
 
             return new ContextRepository(chromaUri, contextCollectionName, fragmentCollectionName);
+        });
+    }
+    
+    private static void AddChatsRepository(IServiceCollection services, IConfiguration configuration)
+    {
+        var connectionString = configuration["ConnectionStrings:ChatsDb"] ?? throw new InvalidOperationException();
+        services.AddDbContext<ChatsDb>(options => options.UseSqlite(connectionString));
+        services.AddSingleton<IChatsRepository, ChatsRepository>(provider =>
+        {
+            var dbContext = provider.GetRequiredService<ChatsDb>();
+            return new ChatsRepository(dbContext);
         });
     }
 }
