@@ -17,7 +17,7 @@ public static class ApplicationServicesInjector
 
     private static void AddConversationService(IServiceCollection services)
     {
-        services.AddSingleton<ConversationService>(provider =>
+        services.AddScoped<ConversationService>(provider =>
         {
             var chats = provider.GetRequiredService<IChatsRepository>();
             var llm = provider.GetRequiredService<AskLlmUseCase>();
@@ -28,7 +28,7 @@ public static class ApplicationServicesInjector
 
     private static void AddContextSeederService(IServiceCollection services, IConfiguration configuration)
     {
-        services.AddSingleton<ContextSeeder>(provider =>
+        services.AddScoped<ContextSeeder>(provider =>
         {
             var contextDb = provider.GetRequiredService<IContextRepository>();
             var textProcessor = provider.GetRequiredService<ITextProcessorService>();

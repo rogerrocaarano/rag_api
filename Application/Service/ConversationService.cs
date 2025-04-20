@@ -10,17 +10,19 @@ public class ConversationService(
     AskLlmUseCase askLlm,
     GetContextUseCase getContext)
 {
-    public async Task<Message> AgentQuery(string message, Guid? userId = null)
+    public async Task<Message> AgentQuery(string message, Guid userId)
     {
-        var conversationId = chats.AddConversation("", userId).Result.Id;
+        var conversationId = chats.AddConversation("Consulta del código de tránsito", userId).Result.Id;
         return await AgentQuery(message, conversationId, userId);
     }
 
-    public async Task<Message> AgentQuery(string message, Guid conversationId, Guid? userId = null)
+    public async Task<Message> AgentQuery(string message, Guid conversationId, Guid userId)
     {
         await chats.AddMessage(conversationId, message, MessageType.User);
-        var conversationHistory = (List<Message>)chats.GetConversation(conversationId).Result.Messages;
+        var conversationHistory = chats.GetConversation(conversationId).Result.Messages.ToList();
         var context = await getContext.Execute(message);
-        return await askLlm.Execute(conversationHistory, context);
+        var llmResponse = await askLlm.Execute(conversationHistory, context);
+        var answer = await chats.AddMessage(conversationId, llmResponse.Content, MessageType.Assistant);
+        return answer;
     }
 }

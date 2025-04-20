@@ -1,24 +1,27 @@
 using Application.UseCase;
 using Domain.Repository;
 using Domain.Service;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure.DI;
 
 public static class UseCasesInjector
 {
-    public static void InjectUseCases(this IServiceCollection services)
+    public static void InjectUseCases(this IServiceCollection services, IConfiguration configuration)
     {
-        AddAskLlmUseCase(services);
+        AddAskLlmUseCase(services, configuration);
         AddGetContextUseCase(services);
     }
 
-    private static void AddAskLlmUseCase(IServiceCollection services)
+    private static void AddAskLlmUseCase(IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<AskLlmUseCase>(provider =>
         {
             var llm = provider.GetRequiredService<ILlmService>();
-            return new AskLlmUseCase(llm);
+            var ruleSet = configuration["Services:Deepseek:Rules"]?.Split(Environment.NewLine)
+                ?? throw new InvalidOperationException("Services:Deepseek:Rules not configured");
+            return new AskLlmUseCase(llm, ruleSet.ToList());
         });
     }
 

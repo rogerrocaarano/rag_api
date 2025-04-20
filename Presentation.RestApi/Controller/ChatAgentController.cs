@@ -18,7 +18,7 @@ public class ChatAgentController(ConversationService conversationService) : Cont
         try
         {
             var answer = request.ConversationId == null
-                ? await conversationService.AgentQuery(request.Message, DefaultUserId)
+                ? await conversationService.AgentQuery(message: request.Message, userId: DefaultUserId)
                 : await conversationService.AgentQuery(request.Message, (Guid)request.ConversationId, DefaultUserId);
 
             var response = new SendChatMessageResponse

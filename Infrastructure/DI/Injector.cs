@@ -10,7 +10,7 @@ public static class Injector
         services.AddHttpClient();
         services.InjectRepositories(configuration);
         services.InjectProviders(configuration);
-        services.InjectUseCases();
+        services.InjectUseCases(configuration);
         services.InjectApplicationServices(configuration);
     }
 }

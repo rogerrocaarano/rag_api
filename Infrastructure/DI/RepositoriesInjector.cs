@@ -36,7 +36,7 @@ public static class RepositoriesInjector
     {
         var connectionString = configuration["ConnectionStrings:ChatsDb"] ?? throw new InvalidOperationException();
         services.AddDbContext<ChatsDb>(options => options.UseSqlite(connectionString));
-        services.AddSingleton<IChatsRepository, ChatsRepository>(provider =>
+        services.AddScoped<IChatsRepository, ChatsRepository>(provider =>
         {
             var dbContext = provider.GetRequiredService<ChatsDb>();
             return new ChatsRepository(dbContext);

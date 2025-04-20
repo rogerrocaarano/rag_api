@@ -17,12 +17,12 @@ public static class ProvidersInjector
     private static void AddDeepseekApiClient(IServiceCollection services, IConfiguration configuration)
     {
         var apiKey = configuration["Services:Deepseek:ApiKey"] ?? throw new InvalidOperationException();
-        services.AddSingleton<ILlmService>(_ => new DeepseekClient(apiKey));
+        services.AddScoped<ILlmService>(_ => new DeepseekClient(apiKey));
     }
 
     private static void AddTextProcessor(IServiceCollection services, IConfiguration configuration)
     {
         var baseUrl = configuration["Services:TextProcessor:BaseUrl"] ?? throw new InvalidOperationException();
-        services.AddSingleton<ITextProcessorService>(_ => new TextProcessorService(baseUrl));
+        services.AddScoped<ITextProcessorService>(_ => new TextProcessorService(baseUrl));
     }
 }

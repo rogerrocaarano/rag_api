@@ -8,26 +8,36 @@ namespace Infrastructure.Persistence.ChatsRepository
     {
         public async Task<Message> AddMessage(Guid conversationId, string messageContent, string messageRole)
         {
+            // TODO: guardar la fecha recibida por la aplicación como SendAt
             var message = new Message
             {
                 Id = Guid.NewGuid(),
                 Content = messageContent,
                 Role = messageRole,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                ConversationId = conversationId
             };
             try
             {
+                if (!await ConversationExists(conversationId)) 
+                    throw new Exception("Conversation not found");
+               
                 await dbContext.Messages.AddAsync(message);
-                await AddMessageToConversation(conversationId, message);
                 await dbContext.SaveChangesAsync();
+                return message;
+
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
                 throw;
             }
-
-            return message;
+        }
+        
+        private async Task<bool> ConversationExists(Guid conversationId)
+        {
+            var conversation = await dbContext.Conversations.FindAsync(conversationId);
+            return conversation != null;
         }
 
         private async Task AddMessageToConversation(Guid conversationId, Message message)
