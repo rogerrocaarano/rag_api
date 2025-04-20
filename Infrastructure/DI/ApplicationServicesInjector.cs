@@ -3,7 +3,7 @@ using Application.UseCase;
 using Domain.Repository;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Infrastructure.Provider.DI;
+namespace Infrastructure.DI;
 
 public static class ApplicationServicesInjector
 {

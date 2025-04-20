@@ -1,4 +1,4 @@
-using Infrastructure.Provider.DI;
+using Infrastructure.DI;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);

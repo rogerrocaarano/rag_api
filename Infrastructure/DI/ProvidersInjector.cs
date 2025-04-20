@@ -4,7 +4,7 @@ using Infrastructure.Provider.TextProcessor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Infrastructure.Provider.DI;
+namespace Infrastructure.DI;
 
 public static class ProvidersInjector
 {
