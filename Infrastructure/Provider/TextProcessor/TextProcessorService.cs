@@ -26,10 +26,20 @@ public class TextProcessorService : ITextProcessorService
 
     public async Task<List<string>> SplitTextFile(string filePath)
     {
-        var restRequest = new RestRequest(ApiEndpoint.SplitFile, Method.Post);
-        restRequest.AddFile("file", filePath);
-
-        return await _client.PostAsync<List<string>>(restRequest) ?? [];
+        try
+        {
+            var restRequest = new RestRequest(ApiEndpoint.SplitFile, Method.Post);
+            restRequest.AddFile("file", filePath, "text/plain");
+            
+            var response = await _client.PostAsync<List<string>>(restRequest);
+            return response ?? [];
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+        
     }
 
     public async Task<List<string>> ExtractTagsFromText(string text)
