@@ -17,7 +17,7 @@ public static class RepositoriesInjector
     
     private static void AddChromaDbContextRepository(IServiceCollection services, IConfiguration configuration)
     {
-        services.AddSingleton<IContextRepository, ContextRepository>(_ =>
+        services.AddSingleton<IContextRepository, ContextRepository>(provider =>
         {
             var chromaUri = configuration["Services:ContextRepository:ChromaUri"] ?? throw new InvalidOperationException();
             var contextCollectionName = configuration["Services:ContextRepository:ContextCollection"] ??
@@ -25,7 +25,10 @@ public static class RepositoriesInjector
             var fragmentCollectionName = configuration["Services:ContextRepository:FragmentCollection"] ??
                                          throw new InvalidOperationException();
 
-            return new ContextRepository(chromaUri, contextCollectionName, fragmentCollectionName);
+            var httpClient = provider.GetService<HttpClient>();
+            var repository = new ContextRepository(chromaUri, httpClient);
+            repository.InitializeAsync(contextCollectionName, fragmentCollectionName).GetAwaiter().GetResult();
+            return repository;
         });
     }
     

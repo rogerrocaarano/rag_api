@@ -7,9 +7,10 @@ public static class Injector
 {
     public static void InjectDependencies(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddHttpClient();
         services.InjectRepositories(configuration);
         services.InjectProviders(configuration);
         services.InjectUseCases();
-        services.InjectApplicationServices();
+        services.InjectApplicationServices(configuration);
     }
 }

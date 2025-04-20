@@ -7,25 +7,50 @@ namespace Infrastructure.Persistence.ContextRepository;
 
 public class ContextRepository : IContextRepository
 {
-    private readonly ChromaCollectionClient _context;
-
-    private readonly ChromaCollectionClient _fragments;
+    private ChromaClient _chromaClient;
+    private readonly HttpClient _httpClient;
+    private ChromaCollectionClient? _contextCollection;
+    private ChromaCollectionClient? _fragmentCollection;
+    private ChromaConfigurationOptions _chromaConfiguration;
 
     public ContextRepository(
         string chromaUri,
-        string contextCollectionName,
-        string fragmentCollectionName
+        HttpClient httpClient
     )
     {
-        var configOptions = new ChromaConfigurationOptions(uri: chromaUri);
-        using var httpClient = new HttpClient();
-        var vectorDb = new ChromaClient(configOptions, httpClient);
+        _chromaConfiguration =
+            new ChromaConfigurationOptions(
+                uri: chromaUri,
+                defaultTenant: "vialmentor",
+                defaultDatabase: "app"
+            );
+        _chromaClient = new ChromaClient(_chromaConfiguration, httpClient);
+        _httpClient = httpClient;
+    }
 
-        var contextCollection = vectorDb.GetOrCreateCollection(contextCollectionName).Result;
-        var fragmentCollection = vectorDb.GetOrCreateCollection(fragmentCollectionName).Result;
+    public async Task InitializeAsync(string contextCollectionName, string fragmentCollectionName)
+    {
+        try
+        {
+            var contextCollection = await _chromaClient.GetOrCreateCollection(contextCollectionName);
+            _contextCollection = new ChromaCollectionClient(
+                contextCollection,
+                _chromaConfiguration,
+                _httpClient
+            );
 
-        _context = new ChromaCollectionClient(contextCollection, configOptions, httpClient);
-        _fragments = new ChromaCollectionClient(fragmentCollection, configOptions, httpClient);
+            var fragmentCollection = await _chromaClient.GetOrCreateCollection(fragmentCollectionName);
+            _fragmentCollection = new ChromaCollectionClient(
+                fragmentCollection,
+                _chromaConfiguration,
+                _httpClient
+            );
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
     public async Task<Guid> AddContext(string name, string description, List<string> tags, List<float> embedding)
@@ -33,7 +58,7 @@ public class ContextRepository : IContextRepository
         try
         {
             var id = Guid.NewGuid();
-            await _context.Add(
+            await _contextCollection.Add(
                 ids: [id.ToString()],
                 documents: [description],
                 metadatas:
@@ -64,7 +89,7 @@ public class ContextRepository : IContextRepository
         try
         {
             var id = Guid.NewGuid();
-            await _fragments.Add(
+            await _fragmentCollection.Add(
                 ids: [id.ToString()],
                 documents: [content],
                 metadatas:
@@ -91,10 +116,10 @@ public class ContextRepository : IContextRepository
     {
         try
         {
-            var result = await _context.Get(contextId.ToString());
-            return result == null
+            var entry = await _contextCollection.Get(contextId.ToString());
+            return entry == null
                 ? throw new Exception($"Context with ID {contextId} not found.")
-                : ItemBuilder.ItemToContext(result);
+                : ItemBuilder.ItemToContext(entry);
         }
         catch (Exception e)
         {
@@ -107,7 +132,7 @@ public class ContextRepository : IContextRepository
     {
         try
         {
-            var result = await _context.Get(name);
+            var result = await _contextCollection.Get(name);
             return result == null
                 ? null
                 : Guid.Parse(result.Id);
@@ -123,7 +148,7 @@ public class ContextRepository : IContextRepository
     {
         try
         {
-            var result = await _fragments.Get(fragmentId.ToString());
+            var result = await _fragmentCollection.Get(fragmentId.ToString());
             return result == null
                 ? throw new Exception($"Fragment with ID {fragmentId} not found.")
                 : ItemBuilder.ItemToFragment(result);
@@ -139,12 +164,12 @@ public class ContextRepository : IContextRepository
     {
         try
         {
-            var entry = await _context.Get(contextId.ToString());
+            var entry = await _contextCollection.Get(contextId.ToString());
             if (entry == null)
                 throw new Exception($"Context with ID {contextId} not found.");
             var metadata = entry.Metadata;
             metadata["Tags"] = string.Join(",", tags);
-            await _context.Update(ids: [contextId.ToString()], metadatas: [metadata]);
+            await _contextCollection.Update(ids: [contextId.ToString()], metadatas: [metadata]);
         }
         catch (Exception e)
         {
@@ -157,17 +182,18 @@ public class ContextRepository : IContextRepository
     {
         try
         {
-            var context = await _context.Get(contextId.ToString());
+            var context = await _contextCollection.Get(contextId.ToString());
             if (context == null)
                 throw new Exception($"Context with ID {contextId} not found.");
 
             // get all fragments for the context
-            var fragments = await _fragments.Get(where: ChromaWhereOperator.Equal("ContextId", contextId.ToString()));
+            var fragments =
+                await _fragmentCollection.Get(where: ChromaWhereOperator.Equal("ContextId", contextId.ToString()));
             var fragmentIds = fragments.Select(f => f.Id).ToList();
             // delete all fragments
-            await _fragments.Delete(fragmentIds);
+            await _fragmentCollection.Delete(fragmentIds);
             // delete the context
-            await _context.Delete([contextId.ToString()]);
+            await _contextCollection.Delete([contextId.ToString()]);
         }
         catch (Exception e)
         {
@@ -180,10 +206,10 @@ public class ContextRepository : IContextRepository
     {
         try
         {
-            var entry = await _fragments.Get(fragmentId.ToString());
+            var entry = await _fragmentCollection.Get(fragmentId.ToString());
             if (entry == null)
                 throw new Exception($"Fragment with ID {fragmentId} not found.");
-            await _fragments.Delete([fragmentId.ToString()]);
+            await _fragmentCollection.Delete([fragmentId.ToString()]);
         }
         catch (Exception e)
         {
@@ -196,12 +222,12 @@ public class ContextRepository : IContextRepository
     {
         try
         {
-            var entry = await _fragments.Get(fragmentId.ToString());
+            var entry = await _fragmentCollection.Get(fragmentId.ToString());
             if (entry == null)
                 throw new Exception($"Fragment with ID {fragmentId} not found.");
             var metadata = entry.Metadata;
             metadata["Tags"] = string.Join(",", tags);
-            await _fragments.Update(ids: [fragmentId.ToString()], metadatas: [metadata]);
+            await _fragmentCollection.Update(ids: [fragmentId.ToString()], metadatas: [metadata]);
         }
         catch (Exception e)
         {
@@ -214,7 +240,8 @@ public class ContextRepository : IContextRepository
     {
         try
         {
-            var queryResult = await _fragments.Query(queryEmbeddings: ItemBuilder.ConvertToReadOnlyMemory(embedding));
+            var queryResult =
+                await _fragmentCollection.Query(queryEmbeddings: ItemBuilder.ConvertToReadOnlyMemory(embedding));
             var fragmentIds = queryResult
                 .Where(x => x.Distance > 0.5)
                 .OrderBy(x => x.Distance)
@@ -241,8 +268,9 @@ public class ContextRepository : IContextRepository
     {
         try
         {
-            var queryResult = await _context.Query(queryEmbeddings: ItemBuilder.ConvertToReadOnlyMemory(embedding));
-            var contextIds = queryResult
+            var entries =
+                await _contextCollection.Query(queryEmbeddings: ItemBuilder.ConvertToReadOnlyMemory(embedding));
+            var contextIds = entries
                 .Where(x => x.Distance > 0.5)
                 .OrderBy(x => x.Distance)
                 .Select(x => Guid.Parse(x.Id))

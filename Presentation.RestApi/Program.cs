@@ -2,7 +2,7 @@ using Infrastructure.DI;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.WebHost.UseUrls("http://0.0.0.0:5001");
+builder.WebHost.UseUrls("http://0.0.0.0:5000");
 
 var configuration = builder.Configuration;
 var services = builder.Services;

@@ -17,9 +17,9 @@ public class TextProcessorService : ITextProcessorService
 
     public async Task<List<float>> GenerateEmbeddingFromText(string text)
     {
-        var restRequest = new RestRequest(ApiEndpoint.Embedding, Method.Post);
-        restRequest.AddJsonBody(new { text });
-        var restResponse = await _client.PostAsync<PostProcessEmbeddingResponse>(restRequest);
+        var restRequest = new RestRequest(ApiEndpoint.Embedding);
+        restRequest.AddParameter("text", text);
+        var restResponse = await _client.GetAsync<PostProcessEmbeddingResponse>(restRequest);
 
         return restResponse.Embedding;
     }
@@ -34,18 +34,19 @@ public class TextProcessorService : ITextProcessorService
 
     public async Task<List<string>> ExtractTagsFromText(string text)
     {
-        var restRequest = new RestRequest(ApiEndpoint.Tags, Method.Post);
-        restRequest.AddJsonBody(new { text });
-        var restResponse = await _client.PostAsync<PostProcessTagsResponse>(restRequest);
+        var restRequest = new RestRequest(ApiEndpoint.Tags);
+        restRequest.AddParameter("text", text);
+        var restResponse = await _client.GetAsync<PostProcessTagsResponse>(restRequest);
 
         return restResponse.Tags;
     }
 
     public async Task<List<string>> ExtractTagsFromText(string text, int maxTags)
     {
-        var restRequest = new RestRequest(ApiEndpoint.MostCommonTags, Method.Post);
-        restRequest.AddJsonBody(new { text, n = maxTags });
-        var restResponse = await _client.PostAsync<PostProcessTagsResponse>(restRequest);
+        var restRequest = new RestRequest(ApiEndpoint.MostCommonTags);
+        restRequest.AddParameter("text", text);
+        restRequest.AddParameter("n", maxTags);
+        var restResponse = await _client.GetAsync<PostProcessTagsResponse>(restRequest);
 
         return restResponse.Tags;
     }
