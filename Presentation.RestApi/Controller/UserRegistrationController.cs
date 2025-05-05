@@ -5,11 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 namespace Presentation.RestApi.Controller;
 
 [ApiController]
-[Authorize(AuthenticationSchemes = "Firebase")]
 [Route("[controller]")]
 public class UserRegistrationController(IFirebaseUsersRepository firebaseUsers) : ControllerBase
 {
-    [HttpGet]
+    [HttpGet("register-firebase-user")]
+    [Authorize(AuthenticationSchemes = "Firebase")]
     public async Task<IActionResult> RegisterFirebaseUserIfNotExists()
     {
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
