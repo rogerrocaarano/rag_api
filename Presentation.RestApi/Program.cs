@@ -1,5 +1,7 @@
 using Infrastructure.DI;
 using Microsoft.OpenApi.Models;
+using Presentation.RestApi.Middleware.Firebase;
+using Microsoft.AspNetCore.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseUrls("http://0.0.0.0:5000");
@@ -13,6 +15,10 @@ configuration
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
 
+services.AddAuthentication("Firebase")
+    .AddScheme<AuthenticationSchemeOptions, FirebaseAuthenticationHandler>(
+        "Firebase", options => { }
+    );
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 services.AddOpenApi();
@@ -25,6 +31,10 @@ services.AddControllers();
 services.InjectDependencies(configuration);
 
 var app = builder.Build();
+FirebaseInitializer.Initialize();
+app.UseAuthentication();
+app.UseAuthorization();
+
 
 app.MapControllers();
 app.UseHttpsRedirection();

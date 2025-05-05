@@ -6,7 +6,6 @@ using Domain.Repository;
 namespace Application.Service;
 
 public class ConversationService(
-    // IChatsRepository chats,
     IMessagesRepository messagesRepository,
     IConversationsRepository conversationsRepository,
     AskLlmUseCase askLlm,
