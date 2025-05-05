@@ -15,6 +15,7 @@ public static class RepositoriesInjector
         AddChatsDbContext(services, configuration);
         AddMessagesRepository(services);
         AddConversationsRepository(services);
+        AddFirebaseUsersRepository(services);
     }
 
     private static void AddChromaDbContextRepository(IServiceCollection services, IConfiguration configuration)
@@ -53,5 +54,10 @@ public static class RepositoriesInjector
     private static void AddConversationsRepository(IServiceCollection services)
     {
         services.AddScoped<IConversationsRepository, ConversationsRepository>();
+    }
+    
+    private static void AddFirebaseUsersRepository(IServiceCollection services)
+    {
+        services.AddScoped<IFirebaseUsersRepository, FirebaseUsersRepository>();
     }
 }

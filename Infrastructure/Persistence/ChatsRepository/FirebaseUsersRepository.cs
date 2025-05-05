@@ -28,14 +28,11 @@ public class FirebaseUsersRepository(ChatsDb dbContext) : IFirebaseUsersReposito
         }
     }
 
-    public async Task<Guid> GetUserByFirebaseId(string userId)
+    public async Task<Guid?> GetUserByFirebaseId(string userId)
     {
         var firebaseUser = await dbContext.FirebaseUsers
             .FirstOrDefaultAsync(u => u.UserId == userId);
 
-        if (firebaseUser == null)
-            throw new Exception("Firebase user not found");
-
-        return firebaseUser.Id;
+        return firebaseUser?.Id;
     }
 }
