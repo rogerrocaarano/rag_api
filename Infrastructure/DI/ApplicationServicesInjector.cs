@@ -17,13 +17,12 @@ public static class ApplicationServicesInjector
 
     private static void AddConversationService(IServiceCollection services)
     {
-        services.AddScoped<ConversationService>(provider =>
-        {
-            var chats = provider.GetRequiredService<IChatsRepository>();
-            var llm = provider.GetRequiredService<AskLlmUseCase>();
-            var getContext = provider.GetRequiredService<GetContextUseCase>();
-            return new ConversationService(chats, llm, getContext);
-        });
+        services.AddScoped<ConversationService>(provider => new ConversationService(
+            provider.GetRequiredService<IMessagesRepository>(),
+            provider.GetRequiredService<IConversationsRepository>(),
+            provider.GetRequiredService<AskLlmUseCase>(),
+            provider.GetRequiredService<GetContextUseCase>()
+        ));
     }
 
     private static void AddContextSeederService(IServiceCollection services, IConfiguration configuration)
