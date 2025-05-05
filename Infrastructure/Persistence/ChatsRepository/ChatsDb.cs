@@ -8,6 +8,8 @@ public class ChatsDb(DbContextOptions<ChatsDb> options) : DbContext(options)
     public DbSet<Message> Messages { get; set; }
 
     public DbSet<Conversation> Conversations { get; set; }
+    
+    public DbSet<FirebaseUser> FirebaseUsers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -18,5 +20,6 @@ public class ChatsDb(DbContextOptions<ChatsDb> options) : DbContext(options)
             .WithOne()
             .HasForeignKey(m => m.ConversationId)
             .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<FirebaseUser>().HasKey(u => u.Id);
     }
 }
