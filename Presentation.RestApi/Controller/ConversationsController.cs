@@ -11,7 +11,7 @@ public class ConversationsController(ConversationService conversationService) : 
 {
     [HttpPost("create")]
     [Authorize(AuthenticationSchemes = "Firebase")]
-    public async Task<IActionResult> PostCreateConversation([FromBody] CreateRequest request)
+    public async Task<IActionResult> CreateConversation([FromBody] CreateRequest request)
     {
         var firebaseId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
@@ -35,7 +35,7 @@ public class ConversationsController(ConversationService conversationService) : 
 
     [HttpPost("{conversationId}/add-message")]
     [Authorize(AuthenticationSchemes = "Firebase")]
-    public async Task<IActionResult> PostAddMessage([FromBody] AddMessageRequest request, [FromRoute]string conversationId)
+    public async Task<IActionResult> AddMessage([FromBody] AddMessageRequest request, [FromRoute]string conversationId)
     {
         var firebaseId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
