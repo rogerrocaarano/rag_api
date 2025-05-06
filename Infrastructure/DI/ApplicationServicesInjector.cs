@@ -20,6 +20,7 @@ public static class ApplicationServicesInjector
         services.AddScoped<ConversationService>(provider => new ConversationService(
             provider.GetRequiredService<IMessagesRepository>(),
             provider.GetRequiredService<IConversationsRepository>(),
+            provider.GetRequiredService<IFirebaseUsersRepository>(),
             provider.GetRequiredService<AskLlmUseCase>(),
             provider.GetRequiredService<GetContextUseCase>()
         ));
