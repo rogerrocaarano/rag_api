@@ -52,6 +52,29 @@ public class ConversationService(
         return conversation.Messages.ToList();
     }
 
+    public async Task<List<Guid>> GetConversationMessagesIds(string firebaseUserId, Guid conversationId)
+    {
+        var userId = await firebaseUsersRepository.GetUserByFirebaseId(firebaseUserId);
+        if (userId == null)
+            throw new Exception("User not found");
+
+        var conversation = await conversationsRepository.GetConversation(conversationId);
+        if (conversation == null || conversation.OwnerId != userId)
+            throw new Exception("Conversation not found");
+
+        return conversation.Messages.Select(m => m.Id).ToList();
+    }
+    
+    public async Task<Message?> GetMessageById(string firebaseUserId, Guid messageId)
+    {
+        var userId = await firebaseUsersRepository.GetUserByFirebaseId(firebaseUserId);
+        if (userId == null)
+            return null;
+
+        var message = await messagesRepository.GetMessage(messageId);
+        return message;
+    }
+
     public async Task<Guid> StartConversation(string conversationHeader, string firebaseUserId)
     {
         var userId = await firebaseUsersRepository.GetUserByFirebaseId(firebaseUserId);

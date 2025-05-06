@@ -33,13 +33,9 @@ public class MessagesRepository(ChatsDb dbContext) : IMessagesRepository
         }
     }
 
-    public async Task<Message> GetMessage(Guid messageId)
+    public async Task<Message?> GetMessage(Guid messageId)
     {
-        var message = await dbContext.Messages.FindAsync(messageId);
-        if (message == null)
-            throw new Exception("Message not found");
-
-        return message;
+        return await dbContext.Messages.FindAsync(messageId);
     }
 
     public async Task<List<Message>> GetMessagesByConversationId(Guid conversationId)
