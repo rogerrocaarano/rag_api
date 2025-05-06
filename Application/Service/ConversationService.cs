@@ -1,4 +1,3 @@
-using Application.Dto;
 using Application.UseCase;
 using Domain.Constant;
 using Domain.Model;
@@ -10,6 +9,7 @@ public class ConversationService(
     IMessagesRepository messagesRepository,
     IConversationsRepository conversationsRepository,
     IFirebaseUsersRepository firebaseUsersRepository,
+    IQueueMessagesRepository queueMessagesRepository,
     AskLlmUseCase askLlm,
     GetContextUseCase getContext)
 {
@@ -79,6 +79,7 @@ public class ConversationService(
             MessageType.User
         );
 
+        await queueMessagesRepository.AddToQueue(messageAdded.Id, conversationId);
         return messageAdded.Id;
     }
 }
