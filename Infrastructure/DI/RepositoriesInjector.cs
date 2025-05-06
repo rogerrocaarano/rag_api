@@ -16,6 +16,7 @@ public static class RepositoriesInjector
         AddMessagesRepository(services);
         AddConversationsRepository(services);
         AddFirebaseUsersRepository(services);
+        AddQueuedMessagesRepository(services);
     }
 
     private static void AddChromaDbContextRepository(IServiceCollection services, IConfiguration configuration)
@@ -55,9 +56,14 @@ public static class RepositoriesInjector
     {
         services.AddScoped<IConversationsRepository, ConversationsRepository>();
     }
-    
+
     private static void AddFirebaseUsersRepository(IServiceCollection services)
     {
         services.AddScoped<IFirebaseUsersRepository, FirebaseUsersRepository>();
+    }
+
+    private static void AddQueuedMessagesRepository(IServiceCollection services)
+    {
+        services.AddScoped<IQueueMessagesRepository, QueueMessagesRepository>();
     }
 }
