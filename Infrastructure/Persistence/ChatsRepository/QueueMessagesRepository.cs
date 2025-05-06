@@ -24,13 +24,13 @@ public class QueueMessagesRepository(ChatsDb dbContext) : IQueueMessagesReposito
         return queuedMessage;
     }
 
-    public async Task<QueuedMessage> AddToQueue(Guid messageId)
+    public async Task<QueuedMessage> AddToQueue(Guid messageId, Guid conversationId)
     {
         var queuedMessage = new QueuedMessage
         {
             Id = Guid.NewGuid(),
             MessageId = messageId,
-            CreatedAt = DateTime.UtcNow
+            ConversationId = conversationId
         };
 
         try
