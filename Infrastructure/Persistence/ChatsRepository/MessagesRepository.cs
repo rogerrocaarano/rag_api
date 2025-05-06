@@ -42,6 +42,18 @@ public class MessagesRepository(ChatsDb dbContext) : IMessagesRepository
         return message;
     }
 
+    public async Task<List<Message>> GetMessagesByConversationId(Guid conversationId)
+    {
+        var messages = await dbContext.Messages
+            .Where(m => m.ConversationId == conversationId)
+            .ToListAsync();
+
+        if (messages == null || !messages.Any())
+            return [];
+
+        return messages;
+    }
+
     public async Task DeleteMessage(Guid messageId)
     {
         var message = await dbContext.Messages.FindAsync(messageId);
