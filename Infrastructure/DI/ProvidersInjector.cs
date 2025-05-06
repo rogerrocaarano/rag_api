@@ -1,6 +1,7 @@
 using Domain.Service;
 using Infrastructure.Provider.Deepseek;
 using Infrastructure.Provider.TextProcessor;
+using Infrastructure.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,6 +13,7 @@ public static class ProvidersInjector
     {
         AddDeepseekApiClient(services, configuration);
         AddTextProcessor(services, configuration);
+        services.AddHostedService<QueueSenderService>();
     }
 
     private static void AddDeepseekApiClient(IServiceCollection services, IConfiguration configuration)

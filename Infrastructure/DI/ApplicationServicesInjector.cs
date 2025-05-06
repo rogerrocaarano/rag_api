@@ -21,6 +21,7 @@ public static class ApplicationServicesInjector
             provider.GetRequiredService<IMessagesRepository>(),
             provider.GetRequiredService<IConversationsRepository>(),
             provider.GetRequiredService<IFirebaseUsersRepository>(),
+            provider.GetRequiredService<IQueueMessagesRepository>(),
             provider.GetRequiredService<AskLlmUseCase>(),
             provider.GetRequiredService<GetContextUseCase>()
         ));
